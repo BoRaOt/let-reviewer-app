@@ -32,7 +32,8 @@
       days: {},           // iso date -> {ms, n, ok, done:{taskKey:true}}
       bookmarks: [],
       exams: [],          // {date, kind, parts:{GenEd:{n,ok}}, pct, perLine}
-      examInProgress: null
+      examInProgress: null,
+      planCache: null     // {key, plan}: today's frozen plan
     };
   }
 
@@ -115,6 +116,7 @@
       if (!st || typeof st !== 'object' || !st.settings || !st.items) throw new Error('Not a LET Study backup file');
       st = this.upgrade(st);
       st.profile = this.state.profile;
+      st.planCache = null;
       this.state = st;
       this.save();
     }

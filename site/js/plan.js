@@ -59,9 +59,26 @@
     return parts[Math.floor(n / 3) % 3];
   }
 
-  /** Build today's plan. */
-  function today(t) {
+  /** Today's plan, frozen for the day once made so finished tasks stay listed. It is rebuilt when
+      the settings change (exam date, minutes, rest days, catch-up choice) or when asked. */
+  function today(t, fresh) {
     t = t || S.today();
+    var s = settings();
+    var key = t + '|' + s.examDate + '|' + s.startDate + '|' + s.dailyMinutes + '|' + s.restDays.join(',') + '|' + s.catchUp;
+    var c = S.state.planCache;
+    if (!fresh && c && c.key === key) {
+      // keep the frozen task list, refresh only the behind-schedule banner
+      var live = build(t);
+      c.plan.behind = live.behind;
+      return c.plan;
+    }
+    var plan = build(t);
+    S.state.planCache = { key: key, plan: plan };
+    S.save();
+    return plan;
+  }
+
+  function build(t) {
     var s = settings(), ex = s.examDate, budget = minutes() * 60;
     var daysLeft = S.daysBetween(t, ex);
     var out = { date: t, daysLeft: daysLeft, phase: phaseOf(t), tasks: [], minutes: 0, behind: null, rest: false };
@@ -69,20 +86,25 @@
     if (daysLeft < 0) { out.status = 'after'; return out; }
     if (daysLeft === 0) { out.status = 'examday'; return out; }
     out.status = 'study';
-    if (isRest(t)) { out.rest = true; out.status = 'rest'; return out; }
+    if (isRest(t) && daysLeft > 1) { out.rest = true; out.status = 'rest'; return out; }
 
     var due = E.dueItems(t), overdue = E.overdueCount(t);
     var dueToday = due.length - overdue;
-    var cap = Math.floor(budget * 0.5 / AVG_SEC);
+    var mockDay = out.phase.id === 'final' && !!finalWeekMock(t, budget);
+    var cap = mockDay ? 0 : Math.floor(budget * 0.5 / AVG_SEC); // mock days: the mock takes the whole budget
+    if (daysLeft === 1) cap = 0;
     var reviewN;
     if (s.catchUp === 'replan') {
       var rem = Math.max(1, Math.min(7, studyDays(t, ex).length));
       reviewN = Math.min(due.length, Math.max(0, dueToday) + Math.ceil(overdue / rem), cap);
     } else {
-      reviewN = Math.min(due.length, Math.floor(budget * (overdue > cap ? 0.8 : 0.5) / AVG_SEC));
+      reviewN = Math.min(due.length, mockDay || daysLeft === 1 ? cap : Math.floor(budget * (overdue > cap ? 0.8 : 0.5) / AVG_SEC));
     }
     var used = 0;
-    function add(task) { out.tasks.push(task); used += task.min * 60; }
+    function add(task) { // optional tasks never push the day past the daily limit (2-minute tolerance)
+      if (out.tasks.length && used + task.min * 60 > budget + 120) return;
+      out.tasks.push(task); used += task.min * 60;
+    }
 
     if (reviewN > 0) add({ key: 'reviews', title: 'Warm-up: ' + reviewN + ' due review' + (reviewN > 1 ? 's' : ''),
       detail: 'Retrieval first. Oldest due items first.' + (due.length > reviewN ? ' (' + (due.length - reviewN) + ' more wait for later days.)' : ''),
@@ -94,7 +116,7 @@
       if (ph === 'learn') nLines = Math.max(1, lb.perDay);
       else nLines = 1; // later phases still finish any topic not yet started
       if (s.catchUp !== 'replan' && lb.behind >= 2) nLines = Math.max(nLines, 2);
-      if (ph === 'final') nLines = Math.min(nLines, 1);
+      if (ph === 'final') nLines = mockDay || daysLeft === 1 ? 0 : 1;
       nLines = Math.min(nLines, 2, lb.unstarted.length);
     }
     lb.unstarted.slice(0, nLines).forEach(function (l) {
@@ -129,17 +151,17 @@
           min: Math.ceil(j * AVG_SEC / 60), action: { type: 'smart', n: j } });
       }
     } else if (ph === 'final') {
-      // A full mock spread over five days so no day breaks the 2-hour cap.
-      var mock = { 7: ['GenEd', 150], 6: ['ProfEd', 75], 5: ['ProfEd', 75], 4: ['TLE', 75], 3: ['TLE', 75] }[daysLeft];
+      // A full mock spread over the first five study days of the final week, so no day breaks the cap.
+      var mock = finalWeekMock(t, budget - used);
       if (mock) {
-        var mins = Math.ceil(mock[1] * E.PACE[mock[0]] / 60);
-        add({ key: 'mock:' + daysLeft, title: 'Mock exam: ' + E.PART_SHORT[mock[0]] + ' (' + mock[1] + ' items' + (mock[1] < 150 ? ', half of the part' : '') + ')',
-          detail: 'Part of a full mock spread over five days. Exam pace, TOS-weighted.', min: mins, action: { type: 'exam', area: mock[0], size: mock[1], mock: true } });
+        add({ key: 'mock:' + mock.slot, title: 'Mock exam ' + (mock.slot + 1) + '/' + mock.of + ': ' + E.PART_SHORT[mock.area] + ', ' + mock.size + ' items',
+          detail: 'Part of a full mock spread over the final week. Exam pace, TOS-weighted.', min: Math.ceil(mock.size * E.PACE[mock.area] / 60),
+          action: { type: 'exam', area: mock.area, size: mock.size, mock: true } });
       }
-      if (daysLeft === 2) {
-        add({ key: 'weak', title: 'Weak spots', detail: 'Drill your weakest TOS lines.', min: 20, action: { type: 'weak' } });
+      if (daysLeft === 2 || (!mock && daysLeft > 1)) {
+        if (budget - used >= 20 * 60) add({ key: 'weak', title: 'Weak spots', detail: 'Drill your weakest TOS lines.', min: 20, action: { type: 'weak' } });
+        if (budget - used >= 10 * 60) add({ key: 'yield', title: 'Highest-yield flashcards', detail: 'Cards from the heaviest TOS lines.', min: 10, action: { type: 'yield' } });
       }
-      if (daysLeft === 2) add({ key: 'yield', title: 'Highest-yield flashcards', detail: 'Cards from the heaviest TOS lines.', min: 10, action: { type: 'yield' } });
       if (daysLeft === 1) {
         add({ key: 'light', title: 'Light review: 15 flashcards', detail: 'Keep it short. Rest tonight.', min: 5, action: { type: 'yield', n: 15 } });
         add({ key: 'checklist', title: 'Exam-day checklist', detail: 'What to prepare tonight.', min: 5, action: { type: 'checklist' } });
@@ -158,8 +180,21 @@
     return out;
   }
 
+  /** Which mock part (if any) falls on day t of the final week. Sizes fit the remaining daily time. */
+  function finalWeekMock(t, secLeft) {
+    var ex = settings().examDate;
+    var slots = studyDays(S.addDays(ex, -7), S.addDays(ex, -1)); // final-week study days before the last day
+    var idx = slots.indexOf(t);
+    if (idx < 0) return null;
+    var parts = slots.length >= 5 ? [['GenEd', 150], ['ProfEd', 75], ['ProfEd', 75], ['TLE', 75], ['TLE', 75]] : [['GenEd', 150], ['ProfEd', 150], ['TLE', 150]];
+    if (idx >= parts.length) return null;
+    var area = parts[idx][0], size = Math.min(parts[idx][1], Math.floor(Math.max(0, secLeft) / E.PACE[area]));
+    if (size < 20) size = 20;
+    return { slot: idx, of: Math.min(parts.length, slots.length), area: area, size: size };
+  }
+
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
   function shortTitle(t) { return String(t).split(' — ')[0]; }
 
-  window.Plan = { today: today, phaseOf: phaseOf, studyDays: studyDays, isRest: isRest, DAY_NAMES: DAY_NAMES, minutes: minutes, shortTitle: shortTitle };
+  window.Plan = { today: today, build: build, phaseOf: phaseOf, studyDays: studyDays, isRest: isRest, DAY_NAMES: DAY_NAMES, minutes: minutes, shortTitle: shortTitle };
 })();

@@ -1025,8 +1025,11 @@
         w.addEventListener('statechange', function () { if (w.state === 'installed' && navigator.serviceWorker.controller) ask(w); });
       });
     }).catch(function (e) { console.warn('SW failed', e); });
-    var reloaded = false;
-    navigator.serviceWorker.addEventListener('controllerchange', function () { if (!reloaded) { reloaded = true; location.reload(); } });
+    var reloaded = false, hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (!hadController) { hadController = true; return; } // first install: nothing to refresh
+      if (!reloaded) { reloaded = true; location.reload(); }
+    });
   }
   document.addEventListener('DOMContentLoaded', init);
 })();

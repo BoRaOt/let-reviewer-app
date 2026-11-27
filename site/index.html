@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LET Study App</title>
+<meta name="description" content="Free offline study app for the Philippine Licensure Examination for Teachers (Secondary, TLE – Home Economics). Questions first, spaced review, timed exams, daily plan.">
+<meta name="theme-color" content="#1f5e4a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LET Study">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <h1 class="brand"><span aria-hidden="true">📘</span> LET Study</h1>
+  <div class="top-actions">
+    <span id="profile-chip" class="chip" title="Current profile"></span>
+    <button id="btn-help" class="icon-btn" aria-label="Help and walkthrough" title="Help">?</button>
+    <button id="btn-settings" class="icon-btn" aria-label="Settings" title="Settings">⚙</button>
+  </div>
+</header>
+<div id="update-banner" class="banner info" hidden>
+  A new version is ready. <button id="btn-update" class="btn small">Reload</button>
+</div>
+<main id="main" tabindex="-1">
+  <div class="loading" id="loading">Loading questions and lessons…</div>
+</main>
+<nav class="tabs" aria-label="Main">
+  <button data-tab="today" aria-label="Today"><span aria-hidden="true">☀</span><span>Today</span></button>
+  <button data-tab="learn" aria-label="Learn"><span aria-hidden="true">📖</span><span>Learn</span></button>
+  <button data-tab="practice" aria-label="Practice"><span aria-hidden="true">✎</span><span>Practice</span></button>
+  <button data-tab="review" aria-label="Review"><span aria-hidden="true">↻</span><span>Review</span></button>
+  <button data-tab="progress" aria-label="Progress"><span aria-hidden="true">📈</span><span>Progress</span></button>
+</nav>
+<dialog id="modal" aria-labelledby="modal-title"><div id="modal-body"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><p class="pad">This app needs JavaScript.</p></noscript>
+<script src="js/md.js"></script>
+<script src="js/store.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/plan.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

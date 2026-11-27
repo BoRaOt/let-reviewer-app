@@ -12,7 +12,7 @@
     --bg: #131715; --surface: #1c2220; --surface-2: #252c29; --text: #e8ece9; --muted: #a3ada7;
     --line: #36403c; --accent: #6cc3a0; --accent-ink: #0d1a14; --accent-soft: #1f3a30;
     --good: #6fd59a; --good-soft: #173523; --bad: #ff8a80; --bad-soft: #3d1c1a;
-    --warn: #f0c060; --warn-soft: #3a2e12; --info-soft: #1b2a3a; --focus: #8ab4f8;
+    --warn: #f0c060; --warn-soft: #3a2e12; --info-soft: #1b2a3a; --focus: #8ab4f8; --danger-ink: #2a0d0b;
     color-scheme: dark;
   }
 }
@@ -20,7 +20,7 @@
   --bg: #131715; --surface: #1c2220; --surface-2: #252c29; --text: #e8ece9; --muted: #a3ada7;
   --line: #36403c; --accent: #6cc3a0; --accent-ink: #0d1a14; --accent-soft: #1f3a30;
   --good: #6fd59a; --good-soft: #173523; --bad: #ff8a80; --bad-soft: #3d1c1a;
-  --warn: #f0c060; --warn-soft: #3a2e12; --info-soft: #1b2a3a; --focus: #8ab4f8;
+  --warn: #f0c060; --warn-soft: #3a2e12; --info-soft: #1b2a3a; --focus: #8ab4f8; --danger-ink: #2a0d0b;
   color-scheme: dark;
 }
 :root[data-size="s"] { --fs: 15px; } :root[data-size="l"] { --fs: 19px; } :root[data-size="xl"] { --fs: 22px; }
@@ -68,7 +68,7 @@ main:focus { outline: none; }
   border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
 .btn.secondary { background: transparent; color: var(--accent); }
 .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
-.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: var(--danger-ink, #fff); }
 .btn.small { min-height: 36px; padding: 4px 12px; font-size: .9rem; }
 .btn.block { width: 100%; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
@@ -123,7 +123,7 @@ details { margin-top: 10px; }
 summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .why-list { margin: 6px 0 0; padding-left: 1.2em; }
 .mini { margin-top: 14px; border: 1px solid var(--accent); background: var(--accent-soft); border-radius: var(--radius); padding: 12px 14px; }
-.mini h4 { margin-top: 0; }
+.mini h3.mini-h { margin-top: 0; font-size: 1rem; }
 .progressbar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin: 6px 0 10px; }
 .progressbar > div { height: 100%; background: var(--accent); }
 .timer { font-variant-numeric: tabular-nums; font-weight: 700; }

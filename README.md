@@ -40,7 +40,7 @@ site/        the app (plain HTML, CSS, JavaScript; no build step, no external li
 content/     the same content in readable form: questions.json, flashcards.json,
              lessons/<part>/<line>.md, mini-lessons/<id>.md, sources.csv, ATTRIBUTION.md
 scripts/     build_sw.py, check_site.py
-tests/       smoke.js (Playwright)
+tests/       logic.js, flows.js, smoke.js (Playwright)
 ```
 
 ## Run locally
@@ -49,10 +49,10 @@ tests/       smoke.js (Playwright)
 python3 -m http.server -d site 8765
 ```
 
-Then open http://localhost:8765/. To run the smoke test (needs Playwright):
+Then open http://localhost:8765/. The browser tests (need Playwright) cover the scheduler and plan logic, the main flows and a smoke run including offline reload; `.github/workflows/test.yml` runs them on every push:
 
 ```bash
-node tests/smoke.js http://localhost:8765/
+node tests/logic.js && node tests/flows.js && node tests/smoke.js
 ```
 
 After changing anything in `site/`, regenerate the service worker and run the checks:

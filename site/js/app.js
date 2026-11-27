@@ -49,7 +49,7 @@
       else if (/^Sources:/i.test(l)) src = l;
       else body.push(l);
     });
-    return '<div class="mini" aria-label="Mini-lesson"><h4>Mini-lesson: ' + esc(m.title) + '</h4><div class="md">' + M.render(body.join('\n')) + '</div>' +
+    return '<div class="mini" aria-label="Mini-lesson"><h3 class="mini-h">Mini-lesson: ' + esc(m.title) + '</h3><div class="md">' + M.render(body.join('\n')) + '</div>' +
       (aid ? '<p><strong>Memory aid:</strong> ' + M.inline(aid) + '</p>' : '') +
       '<p class="small muted">Sources: ' + srcLine(m.src) + '</p></div>';
   }
@@ -487,7 +487,7 @@
       h += '<p class="big-num">' + pct(r.avg) + '</p><p>Weighted general average (20/40/40). ' + (r.pass ? '<span class="tag ok">meets the reported passing rule</span>' : '<span class="tag">below the reported passing rule</span>') + '</p>' +
         '<p class="small muted">Reported rule (unverified): average at least 75% and no part below 50%.</p>';
     }
-    h += '</div><div class="card"><h3>By TOS line</h3><div class="tbl-wrap"><table class="data"><thead><tr><th>Line</th><th class="num">Score</th><th class="num">%</th></tr></thead><tbody>';
+    h += '</div><div class="card"><h3>By TOS line</h3><div class="tbl-wrap" tabindex="0" role="region" aria-label="Score by TOS line"><table class="data"><thead><tr><th>Line</th><th class="num">Score</th><th class="num">%</th></tr></thead><tbody>';
     Object.keys(r.perLine).sort().forEach(function (l) { var x = r.perLine[l]; h += '<tr><td>' + l + ' ' + esc(lineTitle(l)) + '</td><td class="num">' + x.ok + '/' + x.n + '</td><td class="num">' + pct(x.ok / x.n) + '</td></tr>'; });
     h += '</tbody></table></div></div>';
     h += '<div class="card"><div class="spread"><h3 style="margin:0">Review answers</h3><div class="seg" role="group" aria-label="Filter">' +
@@ -773,7 +773,7 @@
     arr.forEach(function (x) { h += '<div style="height:' + (100 * x[1] / maxm) + '%" title="' + x[0] + ': ' + x[1] + ' min"></div>'; labels += '<span>' + x[0].slice(8) + '</span>'; });
     h += '</div><div class="bars-labels">' + labels + '</div><p class="small muted">Daily limit: ' + P.minutes() + ' min (hard cap 120).</p></div>';
 
-    h += '<div class="card"><h3>Accuracy by TOS line</h3><div class="tbl-wrap"><table class="data"><thead><tr><th>Line</th><th class="num">TOS items</th><th class="num">Answered</th><th>Accuracy (last 20)</th></tr></thead><tbody>';
+    h += '<div class="card"><h3>Accuracy by TOS line</h3><div class="tbl-wrap" tabindex="0" role="region" aria-label="Accuracy by TOS line"><table class="data"><thead><tr><th>Line</th><th class="num">TOS items</th><th class="num">Answered</th><th>Accuracy (last 20)</th></tr></thead><tbody>';
     E.AREAS.forEach(function (a) {
       h += '<tr><th colspan="4">' + esc(E.PART_NAME[a]) + '</th></tr>';
       D.lines.filter(function (l) { return l.area === a; }).forEach(function (l) {

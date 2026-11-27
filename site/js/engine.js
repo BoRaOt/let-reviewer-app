@@ -175,8 +175,9 @@
   function interleave(items) {
     var out = [], rest = items.slice();
     while (rest.length) {
-      var prev = out.length ? out[out.length - 1].l : null;
-      var i = rest.findIndex(function (q) { return q.l !== prev; });
+      var prev = out.length ? out[out.length - 1] : null;
+      var i = prev ? rest.findIndex(function (q) { return q.l !== prev.l; }) : 0;
+      if (i < 0) i = rest.findIndex(function (q) { return q.m !== prev.m; }); // else at least change subtopic
       if (i < 0) i = 0;
       out.push(rest.splice(i, 1)[0]);
     }

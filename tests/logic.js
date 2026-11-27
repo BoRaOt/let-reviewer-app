@@ -122,9 +122,15 @@ const BASE = process.argv[2] || 'http://localhost:8765/';
     ok(Object.values(gl).every(n => n === 15), 'GenEd 15 per unit');
 
     // --- interleaving ---
-    const mix = E.interleavedMix(20);
-    let same = 0; for (let i = 1; i < mix.length; i++) if (mix[i].l === mix[i - 1].l) same++;
-    ok(mix.length === 20 && same <= 4, 'interleaved mix of 20 with few same-line neighbours (' + same + ')');
+    let worst = 0, sets = 0;
+    for (let r = 0; r < 30; r++) {
+      const mix = E.interleavedMix(20);
+      let same = 0; for (let i = 1; i < mix.length; i++) if (mix[i].m === mix[i - 1].m) same++;
+      worst = Math.max(worst, same);
+      if (mix.length === 20 && E.CONFUSABLE.some(set => mix.filter(x => set.includes(x.m)).length >= 4)) sets++;
+    }
+    ok(worst <= 2, 'interleaved mix rarely repeats a subtopic back to back (worst ' + worst + ' in 30 runs)');
+    ok(sets === 30, 'every mix draws on a confusable set');
 
     // --- readiness ---
     S.state.items = {};

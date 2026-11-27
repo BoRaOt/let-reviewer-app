@@ -41168,6 +41168,48 @@
   "notes": ""
  },
  {
+  "id": "TLE-HEB8-N0012",
+  "seed_id": null,
+  "origin": "new",
+  "area": "TLE",
+  "subject": "Tools and Equipment in HE",
+  "tos_line": "HE-B8",
+  "subtopic": "HE-B8-kitchen-cleaning-equipment",
+  "difficulty": 2,
+  "type": "mcq",
+  "stem": "Required knowledge in the kitchen-cleaning unit includes:",
+  "options": [
+   "Environment-friendly cleaning products and cross-contamination issues",
+   "Pattern drafting and garment fitting for uniforms",
+   "Engine timing and carburetor tuning",
+   "Seed selection and planting distance"
+  ],
+  "answer": 0,
+  "shuffle": [
+   2,
+   1,
+   0,
+   3
+  ],
+  "served_answer": 2,
+  "explanation": {
+   "correct": "The evidence guide lists both.",
+   "wrong": {
+    "1": "That is dressmaking.",
+    "2": "That is automotive.",
+    "3": "That is agriculture."
+   }
+  },
+  "mini_lesson_id": "ml-HE-B8-kitchen-cleaning-equipment",
+  "source_ids": [
+   "SRC-0075"
+  ],
+  "status": "verified",
+  "duplicate_of": null,
+  "cleared_for_public": true,
+  "notes": ""
+ },
+ {
   "id": "TLE-HEB8-N0013",
   "seed_id": null,
   "origin": "new",

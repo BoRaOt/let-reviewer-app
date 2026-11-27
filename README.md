@@ -21,8 +21,8 @@ A free, offline study app for the Philippine **Licensure Examination for Teacher
 
 | | Count |
 |---|---|
-| Questions | 1,714 (GenEd 345, ProfEd 619, Specialization 750) |
-| Flashcards | 885 |
+| Questions | 1,715 (GenEd 345, ProfEd 619, Specialization 751) |
+| Flashcards | 886 |
 | Lessons | 36 (one per TOS line) |
 | Mini-lessons | 274 |
 | Cited sources | 210 |

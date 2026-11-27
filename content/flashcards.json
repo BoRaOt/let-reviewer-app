@@ -3393,6 +3393,21 @@
   "cleared_for_public": true
  },
  {
+  "id": "FC-HE-A2-006",
+  "area": "TLE",
+  "subject": "Home Economics literacy, family and consumer life skills (exploratory)",
+  "tos_line": "HE-A2",
+  "subtopic": "Fibers",
+  "front": "Plant fibers by source: _____ fiber (cotton); leaf fiber (pineapple, abacá/banana); bast fiber from the stem's outer layer (flax, jute, ramie, kenaf, hemp).",
+  "back": "seed — Plant fibers by source: seed fiber (cotton); leaf fiber (pineapple, abacá/banana); bast fiber from the stem's outer layer (flax, jute, ramie, kenaf, hemp).",
+  "lesson_id": "HE-A2",
+  "source_ids": [
+   "SRC-0140"
+  ],
+  "status": "verified",
+  "cleared_for_public": true
+ },
+ {
   "id": "FC-HE-A2-007",
   "area": "TLE",
   "subject": "Home Economics literacy, family and consumer life skills (exploratory)",
